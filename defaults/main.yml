@@ -1,0 +1,40 @@
+---
+lighthouse_service_name: 'lighthouse'
+lighthouse_service_path: '/docker/{{ lighthouse_service_name }}'
+lighthouse_user:         'dockremap'
+lighthouse_group:        'docker'
+
+# Docker
+lighthouse_cont_image: 'sigp/lighthouse:{{ lighthouse_cont_tag }}'
+lighthouse_cont_tag: 'latest'
+lighthouse_cont_name: 'lighthouse'
+lighthouse_cont_port_listening: 9000
+lighthouse_cont_port_quic: 9001
+lighthouse_cont_port_http: 5052
+lighthouse_cont_port_metrics: 5054
+lighthouse_cont_vol_data: '{{ lighthouse_service_path }}/data'
+lighthouse_cont_vol_secrets: '{{ lighthouse_service_path }}/secrets'
+lighthouse_cont_external_networks: []
+# Configuration
+lighthouse_config_network: 'mainnet'
+lighthouse_config_execution_endpoint:  'http://host.docker.internal:8551'
+lighthouse_config_jwt_secret_path:     '/secrets/jwt.hex'
+lighthouse_config_checkpoint_sync_url: 'https://mainnet.checkpoint.sigp.io'
+lighthouse_config_jwt_secret:         # 'ChangeMeIfYouCare'
+lighthouse_config_debug_level: 'INFO'
+
+# Consul Service
+lighthouse_consul_config_name: '{{ lighthouse_service_name | replace("-", "_") }}'
+lighthouse_consul_service_name: '{{ lighthouse_service_name }}'
+lighthouse_consul_tags: ['lighthouse', 'eth', 'bn']
+lighthouse_consul_check_disabled: false
+lighthouse_consul_check_interval: '60s'
+lighthouse_consul_check_timeout: '10s'
+lighthouse_consul_success_before_passing: 0
+lighthouse_consul_failures_before_warning: 5
+lighthouse_consul_failures_before_critical: 10
+
+# general container management
+compose_recreate: 'auto'
+compose_state: 'present'
+compose_pull: 'always'

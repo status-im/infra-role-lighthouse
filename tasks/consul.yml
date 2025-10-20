@@ -1,0 +1,34 @@
+---
+- name: Create Consul service definition
+  include_role:
+    name: infra-role-consul-service
+  vars:
+    consul_config_name:                      '{{ lighthouse_consul_config_name }}'
+    consul_default_check_disabled:           '{{ lighthouse_consul_check_disabled }}'
+    consul_default_check_interval:           '{{ lighthouse_consul_check_interval }}'
+    consul_default_check_timeout:            '{{ lighthouse_consul_check_timeout }}'
+    consul_default_success_before_passing:   '{{ lighthouse_consul_success_before_passing }}'
+    consul_default_failures_before_warning:  '{{ lighthouse_consul_failures_before_warning }}'
+    consul_default_failures_before_critical: '{{ lighthouse_consul_failures_before_critical }}'
+    consul_services:
+      - id:      '{{ lighthouse_service_name }}'
+        name:    '{{ lighthouse_consul_service_name }}'
+        tags:    '{{ lighthouse_consul_tags }}'
+        port:    '{{ lighthouse_cont_port_http }}'
+        address: '{{ ansible_local.wireguard.address }}'
+        checks:
+          - id:   '{{ lighthouse_consul_service_name }}-api-health'
+            name: 'lighthouse Sequence API Healthcheck'
+            type: 'http'
+            http: 'http://localhost:{{ lighthouse_cont_port_http }}/eth/v1/beacon/headers/head'
+
+      - id:      '{{ lighthouse_cont_name }}'
+        name:    '{{ lighthouse_consul_service_name }}-metrics'
+        tags:    '{{ lighthouse_consul_tags + ["metrics"] }}'
+        port:    '{{ lighthouse_cont_port_metrics }}'
+        address: '{{ ansible_local.wireguard.address }}'
+        checks:
+          - id:   '{{ lighthouse_consul_service_name }}-metrics-health'
+            name: 'Lighthouse Metrics Healthcheck'
+            type: 'http'
+            http: 'http://localhost:{{ lighthouse_cont_port_metrics }}/metrics'

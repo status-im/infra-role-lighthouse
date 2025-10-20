@@ -1,0 +1,23 @@
+---
+- name: Create service directories
+  file:
+    path:  '{{ item }}'
+    state: 'directory'
+    owner: 'dockremap'
+    group: 'docker'
+    mode:  '0750'
+  with_items:
+    - '{{ lighthouse_service_path }}'
+    - '{{ lighthouse_cont_vol_data }}'
+    - '{{ lighthouse_cont_vol_secrets }}'
+
+- name: 'Create jwt secrets for execution Node'
+  when: lighthouse_config_jwt_secret is defined
+  copy:
+    dest:    '{{ lighthouse_cont_vol_secrets }}/jwt.hex'
+    content: '{{ lighthouse_config_jwt_secret }}'
+    owner:   '{{ lighthouse_user }}'
+    group:   '{{ lighthouse_group }}'
+    mode:    0400
+
+

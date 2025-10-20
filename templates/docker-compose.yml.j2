@@ -1,0 +1,43 @@
+#vim:ft=yml
+---
+services:
+  lighthouse:
+    image: '{{ lighthouse_cont_image }}'
+    container_name: '{{ lighthouse_cont_name }}'
+    ports:
+      - '{{ lighthouse_cont_port_listening }}:{{ lighthouse_cont_port_listening }}'
+      - '{{ lighthouse_cont_port_quic }}:{{ lighthouse_cont_port_quic }}'
+      - '{{ lighthouse_cont_port_http }}:{{ lighthouse_cont_port_http }}'
+      - '{{ lighthouse_cont_port_metrics }}:{{ lighthouse_cont_port_metrics }}'
+    volumes:
+      - '{{ lighthouse_cont_vol_data }}:/root/.lighthouse'
+      - '{{ lighthouse_cont_vol_secrets }}:/secrets'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: >
+      lighthouse bn
+        --network {{ lighthouse_config_network }}
+        --listen-address '0.0.0.0'
+        --execution-endpoint {{ lighthouse_config_execution_endpoint }}
+        --execution-jwt {{ lighthouse_config_jwt_secret_path }}
+        --checkpoint-sync-url {{ lighthouse_config_checkpoint_sync_url }}
+        --disable-deposit-contract-sync
+        --port {{ lighthouse_cont_port_listening }}
+        --quic-port {{ lighthouse_cont_port_quic }}
+        --metrics --metrics-port {{ lighthouse_cont_port_metrics }} --metrics-address '0.0.0.0'
+        --subscribe-all-subnets --import-all-attestations
+        --http --http-address '0.0.0.0'
+    networks:
+      - '{{ lighthouse_service_name }}'
+{% for network in lighthouse_cont_external_networks %}
+      - '{{ network }}'
+{% endfor %}
+
+networks:
+  lighthouse:
+    driver: bridge
+    name: lighthouse
+{% for network in lighthouse_cont_external_networks %}
+  {{ network }}:
+    external: true
+{% endfor %}
