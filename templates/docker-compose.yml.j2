@@ -21,12 +21,12 @@ services:
         --execution-endpoint {{ lighthouse_config_execution_endpoint }}
         --execution-jwt {{ lighthouse_config_jwt_secret_path }}
         --checkpoint-sync-url {{ lighthouse_config_checkpoint_sync_url }}
-        --disable-deposit-contract-sync
         --port {{ lighthouse_cont_port_listening }}
         --quic-port {{ lighthouse_cont_port_quic }}
         --metrics --metrics-port {{ lighthouse_cont_port_metrics }} --metrics-address '0.0.0.0'
         --subscribe-all-subnets --import-all-attestations
         --http --http-address '0.0.0.0'
+        --semi-supernode --private
     networks:
       - '{{ lighthouse_service_name }}'
 {% for network in lighthouse_cont_external_networks %}

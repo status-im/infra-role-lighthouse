@@ -6,7 +6,7 @@ lighthouse_group:        'docker'
 
 # Docker
 lighthouse_cont_image: 'sigp/lighthouse:{{ lighthouse_cont_tag }}'
-lighthouse_cont_tag: 'latest'
+lighthouse_cont_tag: 'v8.1.3'
 lighthouse_cont_name: 'lighthouse'
 lighthouse_cont_port_listening: 9000
 lighthouse_cont_port_quic: 9001
